@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Smart Parking System</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+color:white;
+}
+
+/* NAVBAR */
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(0,0,0,0.6);
+padding:15px 40px;
+position:sticky;
+top:0;
+}
+
+nav h2{
+color:#00ffff;
+}
+
+nav ul{
+list-style:none;
+display:flex;
+gap:25px;
+}
+
+nav ul li a{
+text-decoration:none;
+color:white;
+font-size:16px;
+}
+
+nav ul li a:hover{
+color:#00ffff;
+}
+
+/* LOGIN BOX */
+
+.login-box{
+width:350px;
+margin:120px auto;
+padding:40px;
+text-align:center;
+border-radius:15px;
+background:rgba(255,255,255,0.08);
+box-shadow:0 0 20px #00ffff;
+}
+
+.login-box h2{
+margin-bottom:10px;
+}
+
+/* BUTTONS */
+
+.btn{
+display:block;
+width:80%;
+margin:15px auto;
+padding:12px;
+border:none;
+border-radius:8px;
+font-size:16px;
+background:#00ffff;
+color:black;
+cursor:pointer;
+}
+
+.btn:hover{
+background:#00cccc;
+}
+
+/* AI STATUS */
+
+.ai-status{
+color:#00ffcc;
+font-weight:bold;
+margin:10px;
+animation:glow 1.5s infinite alternate;
+}
+
+@keyframes glow{
+from{
+text-shadow:0 0 5px #00ffcc;
+}
+to{
+text-shadow:0 0 20px #00ffff;
+}
+}
+
+/* MOVING CAR */
+
+.car{
+position:fixed;
+bottom:10px;
+left:-100px;
+font-size:40px;
+animation:carMove 10s linear infinite;
+}
+
+@keyframes carMove{
+0%{left:-100px;}
+100%{left:110%;}
+}
+
+/* SECTIONS */
+
+section{
+padding:80px;
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<h2>🚗 Smart Parking</h2>
+
+<ul>
+<li><a href="#home">Home</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#services">Services</a></li>
+<li><a href="#security">Security</a></li>
+<li><a href="#help">Help</a></li>
+</ul>
+
+</nav>
+
+
+<!-- HOME SECTION -->
+
+<section id="home">
+
+<div class="login-box">
+
+<h2>🚗 Smart Parking System</h2>
+
+<p>Please choose your login type</p>
+
+
+
+<button class="btn" onclick="location.href='/login_email'">
+User Login
+</button>
+
+<button class="btn" onclick="location.href='/admin_login'">
+Admin Login
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section id="about">
+
+<h2>About</h2>
+
+<p>
+Smart Parking System is designed to help drivers easily find available parking slots.
+The system uses digital monitoring and smart management to reduce traffic congestion
+and save time for drivers.
+</p>
+
+</section>
+
+
+<!-- SERVICES -->
+
+<section id="services">
+
+<h2>Services</h2>
+
+<p>
+
+✔ Real-time parking slot availability<br>
+✔ User and Admin login system<br>
+✔ QR code based vehicle entry<br>
+✔ Smart parking dashboard monitoring
+
+</p>
+
+</section>
+
+
+<!-- SECURITY -->
+
+<section id="security">
+
+<h2>Security</h2>
+
+<p>
+The system ensures security using OTP verification, admin authentication,
+and controlled access to the parking dashboard.
+</p>
+
+</section>
+
+
+<!-- HELP -->
+
+<section id="help">
+
+<h2>Help</h2>
+
+<p>
+If you face any issue while booking a parking slot or logging into the system,
+please contact the administrator or technical support team.
+</p>
+
+</section>
+
+
+<!-- MOVING CAR -->
+
+<div class="car">🚗</div>
+
+
+</body>
+</html>

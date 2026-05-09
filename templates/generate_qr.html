@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate Parking QR</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a2e0d9a6a0.js" crossorigin="anonymous"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #00bcd4, #007bff, #ff4081);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #fff;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .qr-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 35px 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      width: 380px;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 26px;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    p {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+      color: #f0f0f0;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 15px;
+      background-color: rgba(255,255,255,0.8);
+      color: #333;
+    }
+
+    button, a.btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin: 8px 6px;
+    }
+
+    .btn-generate {
+      background-color: #00ffcc;
+      color: #333;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+
+    .btn-generate:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 20px #00ffcc;
+    }
+
+    .btn-download {
+      background-color: #007bff;
+      color: #fff;
+      box-shadow: 0 0 10px #007bff;
+    }
+
+    .btn-download:hover {
+      background-color: #0099ff;
+      box-shadow: 0 0 20px #00ccff;
+    }
+
+    .btn-back {
+      background-color: #ff6699;
+      color: #fff;
+      box-shadow: 0 0 10px #ff6699;
+    }
+
+    .btn-back:hover {
+      background-color: #ff3385;
+      box-shadow: 0 0 20px #ff6699;
+    }
+
+    .qr-preview {
+      position: relative;
+      margin-top: 20px;
+      display: inline-block;
+      animation: zoomIn 0.8s ease;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .scanner-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(0, 255, 0, 0.7);
+      animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { top: 0; }
+      50% { top: 100%; }
+      100% { top: 0; }
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .icon {
+      font-size: 50px;
+      color: #00ffcc;
+      animation: pulse 1.5s infinite alternate;
+      margin-bottom: 10px;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="qr-card">
+    <div class="icon"><i class="fa-solid fa-qrcode"></i></div>
+    <h2>Generate Parking QR</h2>
+    <p>Enter your slot name (like A1, B2, etc.)</p>
+
+    <form method="POST" action="/generate_qr">
+      <input type="text" name="slot_name" placeholder="Enter Slot Name" required />
+      <button type="submit" class="btn-generate">Generate QR</button>
+    </form>
+
+    {% if qr_path %}
+      <div class="qr-preview">
+        <div class="scanner-line"></div>
+        <img src="{{ url_for('static', filename='qrcodes/' + qr_path.split('/')[-1]) }}" alt="QR Code" width="200" height="200" />
+        <br>
+        <a href="{{ url_for('static', filename='qrcodes/' + qr_path.split('/')[-1]) }}" download="{{ slot_name }}_QR.png" class="btn btn-download">
+          <i class="fa-solid fa-download"></i> Download QR
+        </a>
+      </div>
+    {% endif %}
+
+    <a href="/dashboard" class="btn btn-back">← Back to Dashboard</a>
+    <footer>Smart Parking System © 2026 </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Parking Dashboard 🎮</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_dashboard.css') }}">
+  <style>
+    @keyframes fadeText {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- BACKGROUND PARTICLES -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.animationDuration = 8 + Math.random() * 12 + "s";
+    p.style.animationDelay = Math.random() * 5 + "s";
+    document.body.appendChild(p);
+  }
+});
+</script>
+  <div class="dashboard-container">
+
+    <!-- HEADER -->
+    <header>
+      <h1>🚗 Smart Parking Dashboard</h1>
+      <h3>Welcome, {{ email }}</h3>
+      <button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
+    </header>
+
+    <!-- ACTIVATE SYSTEM BUTTON -->
+    <button id="startSystemBtn" style="
+      background:#00ffff;
+      color:#000;
+      border:none;
+      padding:10px 20px;
+      border-radius:10px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:15px;
+      box-shadow:0 0 15px #00ffff;">
+      ▶️ Activate System Audio
+    </button>
+    <!-- VOLUME CONTROL BUTTON -->
+<button id="volumeBtn" style="
+  background:#111;
+  color:#00ffff;
+  border:2px solid #00ffff;
+  padding:8px 18px;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+  box-shadow:0 0 15px #00ffff;
+  display:none;">
+  🔊 Volume: 100%
+</button>
+
+    <!-- SCANNING MESSAGE -->
+    <div id="scanning-message" style="
+        font-size:1.5em;
+        color:#00ffff;
+        margin-top:20px;
+        text-shadow:0 0 10px #00ffff;
+        display:none;
+        animation:fadeText 1s ease-in-out infinite alternate;">
+      🔍 Scanning available parking slots...
+    </div>
+
+  
+
+ <!-- STATS -->
+    <div class="stats-container">
+      <div class="stat-box total">
+        <p>Total Slots</p>
+        <h2>{{ total_slots }}</h2>
+      </div>
+      <div class="stat-box free">
+        <p>Free Slots</p>
+        <h2>{{ free_slots }}</h2>
+      </div>
+      <div class="stat-box occupied">
+        <p>Occupied</p>
+        <h2>{{ occupied_slots }}</h2>
+      </div>
+    </div>
+
+   <!-- PARKING SLOTS -->
+<div class="slots-grid">
+
+{% for slot in slots %}
+
+<div class="slot {{ 'occupied' if slot[2] == 'occupied' else 'free' }}">
+    
+    <h3>{{ slot[1] }}</h3>
+    <p>Status: {{ slot[2] }}</p>
+
+    {% if slot[2] == 'occupied' %}
+        <p>👤 {{ slot[4] }}</p>
+        <p>🚗 {{ slot[6] }}</p>
+        <p>🔢 {{ slot[7] }}</p>
+        <p>⏰ {{ slot[8] }}</p>
+
+        <div class="car-icon">🚗</div>
+    {% endif %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+    <!-- QR CODE SECTION -->
+<div style="text-align:center; margin-top:30px;">
+
+<h3 style="color:#00ffff;">📱 Your Parking QR Code</h3>
+
+<img src="{{ url_for('static', filename='qrcodes/' + qr_file) }}" 
+     width="200"
+     style="border:3px solid #00ffff; border-radius:10px;">
+
+<br><br>
+
+<a href="{{ url_for('static', filename='qrcodes/' + qr_file) }}" download>
+  <button style="
+  background:#00ffff;
+  color:#000;
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;">
+  ⬇ Download QR Code
+  </button>
+</a>
+
+</div>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>Smart Parking System © 2026 </p>
+    </footer>
+
+  </div>
+
+  <!-- ======= SOUND & ANIMATION SCRIPT ======= -->
+  <!-- ========= FULL SCRIPT ========= -->
+<script>
+let audioCtx;
+let masterVolume = 1.0;
+
+// 🎵 Play tones (local beeps)
+function playTone(freq = 440, duration = 200, volume = 0.3) {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  oscillator.type = "sine";
+  oscillator.frequency.value = freq;
+  gain.gain.value = volume * masterVolume;
+  oscillator.connect(gain);
+  gain.connect(audioCtx.destination);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + duration / 1000);
+}
+
+// 🚀 Activate system audio
+async function activateSystemAudio() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") await audioCtx.resume();
+
+  playTone(600, 250, 0.4);
+  setTimeout(() => playTone(800, 250, 0.3), 300);
+
+  // Ambient hum
+  setInterval(() => playTone(100, 400, 0.05), 5000);
+
+  document.getElementById("startSystemBtn").style.display = "none";
+  document.getElementById("volumeBtn").style.display = "inline-block";
+
+  const scanningMsg = document.getElementById("scanning-message");
+  scanningMsg.style.display = "block";
+
+  setTimeout(() => {
+    scanningMsg.style.display = "none";
+    animateSlots();
+  }, 3000);
+  
+}
+
+// 🔊 Volume button toggle
+document.getElementById("volumeBtn").addEventListener("click", () => {
+  if (masterVolume === 1.0) {
+    masterVolume = 0.3;
+    document.getElementById("volumeBtn").innerText = "🔉 Volume: 30%";
+  } else if (masterVolume === 0.3) {
+    masterVolume = 0;
+    document.getElementById("volumeBtn").innerText = "🔇 Muted";
+  } else {
+    masterVolume = 1.0;
+    document.getElementById("volumeBtn").innerText = "🔊 Volume: 100%";
+  }
+  playTone(800, 150, 0.3); // feedback beep
+});
+
+// 🖱️ Hover beep
+function hoverBeep() { playTone(1000, 120, 0.2); }
+
+// ✨ Animate slots
+function animateSlots() {
+  const slots = document.querySelectorAll(".slot");
+  slots.forEach((slot, index) => {
+    slot.style.opacity = "0";
+    slot.style.transform = "scale(0.5)";
+    setTimeout(() => {
+      slot.style.transition = "all 0.6s ease";
+      slot.style.opacity = "1";
+      slot.style.transform = "scale(1.05)";
+      slot.style.boxShadow = "0 0 25px #00ffff";
+
+      if (slot.classList.contains("occupied")) {
+        slot.classList.add("scanning-occupied");
+      } else {
+        slot.classList.add("scanning-free");
+      }
+
+      setTimeout(() => {
+        slot.style.transform = "scale(1)";
+      }, 600);
+    }, index * 250);
+  });
+}
+
+document.getElementById("startSystemBtn").addEventListener("click", activateSystemAudio);
+document.querySelectorAll(".slot").forEach(slot => slot.addEventListener("mouseenter", hoverBeep));
+
+
+// LIVE SLOT UPDATE
+function updateSlots(){
+
+fetch("/get_slots")
+
+.then(response => response.json())
+
+.then(data => {
+
+let slotElements = document.querySelectorAll(".slot");
+
+data.slots.forEach((slotData, index) => {
+
+let slot = slotElements[index];
+
+slot.classList.remove("free","occupied");
+
+slot.classList.add(slotData[2]);
+slot.querySelector("p").innerText = "Status: " + slotData[2];
+});
+
+});
+
+}
+
+// update slots every 5 seconds
+setInterval(updateSlots,5000);
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+
+<style>
+body{
+background:linear-gradient(to right, #0f0f0f, #1c1c1c);
+color:white;
+text-align:center;
+font-family:Arial;
+}
+
+/* SEARCH BOX */
+#search{
+padding:10px;
+margin:20px;
+width:250px;
+border-radius:5px;
+border:none;
+}
+
+/* TABLE */
+table{
+margin:auto;
+width:95%;
+border-collapse:collapse;
+background:#1a1a1a;
+border-radius:10px;
+overflow:hidden;
+}
+
+th{
+background:#333;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #333;
+}
+
+/* STATUS COLORS */
+.free{
+background:green;
+padding:5px 10px;
+border-radius:5px;
+}
+
+.occupied{
+background:red;
+padding:5px 10px;
+border-radius:5px;
+}
+
+/* BUTTON */
+button{
+padding:6px 12px;
+background:red;
+color:white;
+border:none;
+cursor:pointer;
+border-radius:6px;
+font-weight:bold;
+}
+
+/* BUTTON HOVER */
+button:hover{
+background:#ff3333;
+}
+tr:hover{
+background:#222;
+}
+</style>
+
+<script>
+    var map;
+    
+// FREE SLOT FUNCTION
+function exitSlot(slot){
+
+fetch("/exit_slot", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: "slot=" + encodeURIComponent(slot)
+})
+
+.then(res => res.json())
+.then(data => {
+    alert("Slot Freed Successfully")
+    loadSlots()
+})
+
+}
+
+// SEARCH FUNCTION
+function searchSlot(){
+let input = document.getElementById("search").value.toLowerCase();
+let rows = document.querySelectorAll("table tr");
+
+rows.forEach((row, index) => {
+    if(index === 0) return;
+    let text = row.innerText.toLowerCase();
+    row.style.display = text.includes(input) ? "" : "none";
+});
+}
+
+function loadSlots(){
+    if(map){
+    map.eachLayer(function(layer){
+        if(layer instanceof L.CircleMarker){
+            map.removeLayer(layer);
+        }
+    });
+
+};
+
+fetch("/get_slots")
+.then(res => res.json())
+.then(data => {
+
+    let slots = data.slots;
+
+    let free = 0;
+    let occupied = 0;
+
+    let table = document.querySelector("table");
+
+    let rows = `
+    <tr>
+        <th>Slot</th>
+        <th>Status</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Car</th>
+        <th>Number</th>
+        <th>Time</th>
+        <th>Action</th>
+    </tr>
+    `;
+
+   slots.forEach(s => {
+
+    // demo map positions
+    let lat = 28.8957 + (Math.random() * 0.0005);
+    let lng = 76.6067 + (Math.random() * 0.0005);
+
+    L.circleMarker([lat, lng], {
+        color: s[2] === 'free' ? 'green' : 'red',
+        radius: 8
+    }).addTo(map)
+
+    .bindTooltip(`${s[1]}`, { permanent: true })
+    .bindPopup(`${s[1]} - ${s[2]}`);
+
+    // count
+    if(s[2] === 'free') free++;
+    else occupied++;
+
+    rows += `
+    <tr>
+        <td>${s[1]}</td>
+
+        <td>
+            ${s[2] === 'free'
+                ? '<span class="free">Free</span>'
+                : '<span class="occupied">Occupied</span>'}
+        </td>
+
+        <td>${s[3] || '-'}</td>
+        <td>${s[4] || '-'}</td>
+        <td>${s[6] || '-'}</td>
+        <td>${s[7] || '-'}</td>
+        <td>${s[8] || '-'}</td>
+
+        <td>
+            ${s[2] === 'occupied'
+                ? `<button onclick="exitSlot('${s[1]}')">Free Slot</button>`
+                : '-'}
+        </td>
+    </tr>
+    `;
+});
+
+
+    table.innerHTML = rows;
+
+    document.getElementById("freeCount").innerText = free;
+    document.getElementById("occupiedCount").innerText = occupied;
+    document.getElementById("totalCount").innerText = free + occupied;
+
+});
+
+}
+window.onload = function(){
+
+    // INITIALIZE MAP AFTER PAGE LOAD
+    map = L.map('map').setView([28.8957, 76.6067], 19);
+    setTimeout(() => {
+    map.invalidateSize();
+}, 100);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © OpenStreetMap contributors'
+    }).addTo(map);
+
+    // LOAD DATA
+    loadSlots();
+
+    // AUTO UPDATE
+    setInterval(loadSlots, 3000);
+};
+
+
+</script>
+
+</head>
+
+<body>
+    <div style="max-width:1200px; margin:auto; padding:20px;">
+
+<h1 style="margin-top:20px;">Admin Dashboard</h1>
+<div style="position:absolute; top:20px; right:20px;">
+    <a href="/logout">
+        <button style="background:#f44336; border-radius:8px; padding:8px 15px;">Logout</button>
+    </a>
+</div>
+
+<div style="display:flex; justify-content:space-between; flex-wrap:wrap; margin:20px; gap:20px;">
+
+    <div style="flex:1; min-width:200px; background:#1f1f1f; padding:20px; border-radius:12px; border:1px solid #333;">
+        <h3>Free Slots</h3>
+        <h1 id="freeCount" style="color:#4CAF50;">{{ free_slots }}</h1>
+    </div>
+
+    <div style="flex:1; min-width:200px; background:#1f1f1f; padding:20px; border-radius:12px; border:1px solid #333;">
+        <h3>Occupied</h3>
+        <h1 id="occupiedCount" style="color:#f44336;">{{ occupied_slots }}</h1>
+    </div>
+
+    <div style="flex:1; min-width:200px; background:#1f1f1f; padding:20px; border-radius:12px; border:1px solid #333;">
+        <h3>Total Slots</h3>
+        <h1 id="totalCount">{{ free_slots + occupied_slots }}</h1>
+    </div>
+
+</div>
+
+<h2>Parking Analytics</h2>
+<h2>Parking Map</h2>
+
+<div id="map" style="height:400px; width:90%; margin:auto; border-radius:10px;"></div>
+
+<div style="display:flex; justify-content:center; gap:30px; margin:20px; flex-wrap:wrap;">
+    
+    <div style="background:#1f1f1f; padding:15px; border-radius:12px; border:1px solid #333;">
+        <h3>Bar Chart</h3>
+        <img src="{{ url_for('static', filename=bar_chart) }}" width="400">
+    </div>
+
+    <div style="background:#1f1f1f; padding:15px; border-radius:12px; border:1px solid #333;">
+        <h3>Pie Chart</h3>
+        <img src="{{ url_for('static', filename=pie_chart) }}" width="400">
+    </div>
+
+</div>
+
+<!-- SEARCH BOX -->
+<input type="text" id="search" placeholder="Search Slot..." onkeyup="searchSlot()">
+
+<table>
+
+<tr>
+<th>Slot</th>
+<th>Status</th>
+<th>Email</th>
+<th>Name</th>
+<th>Car</th>
+<th>Number</th>
+<th>Time</th>
+<th>Action</th>
+</tr>
+
+{% for slot in slots %}
+
+<tr>
+<td>{{ slot.slot_name }}</td>
+
+<td>
+{% if slot.status == 'free' %}
+<span class="free">Free</span>
+{% else %}
+<span class="occupied">Occupied</span>
+{% endif %}
+</td>
+
+<!-- FIX: SHOW "-" IF EMPTY -->
+<td>{{ slot.email if slot.email else '-' }}</td>
+<td>{{ slot.name if slot.name else '-' }}</td>
+<td>{{ slot.carname if slot.carname else '-' }}</td>
+<td>{{ slot.carnumber if slot.carnumber else '-' }}</td>
+<td>{{ slot.time if slot.time else '-' }}</td>
+
+<td>
+{% if slot.status == 'occupied' %}
+<button onclick="exitSlot('{{slot.slot_name}}')">
+Free Slot
+</button>
+{% else %}
+-
+{% endif %}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+</div>
+</body>
+</html>
+

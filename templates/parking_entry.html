@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<title>Smart Parking</title>
+
+<style>
+body{
+background:black;
+color:white;
+text-align:center;
+font-family:Arial;
+}
+
+input{
+padding:10px;
+margin:5px;
+border-radius:5px;
+border:none;
+width:220px;
+}
+
+.slot{
+width:120px;
+padding:15px;
+margin:10px;
+color:white;
+border:none;
+font-size:18px;
+cursor:pointer;
+}
+
+.free{
+background:green;
+}
+
+.occupied{
+background:red;
+cursor:not-allowed;
+}
+
+.card{
+border:1px solid white;
+padding:10px;
+margin:10px;
+border-radius:10px;
+}
+</style>
+
+<script>
+
+// =======================
+// BOOK SLOT FUNCTION
+// =======================
+function bookSlot(slot){
+
+let name = document.getElementById("username").value
+let phone = document.getElementById("phone").value
+let carname = document.getElementById("carname").value
+let carnumber = document.getElementById("carnumber").value
+let time = document.getElementById("time").value
+
+if(name=="" || phone=="" || carname=="" || carnumber=="" || time==""){
+alert("Please fill all details first")
+return
+}
+
+fetch("/book_slot", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: 
+    "slot=" + encodeURIComponent(slot) +
+    "&email={{email}}" +
+    "&name=" + encodeURIComponent(name) +
+    "&phone=" + encodeURIComponent(phone) +
+    "&carname=" + encodeURIComponent(carname) +
+    "&carnumber=" + encodeURIComponent(carnumber) +
+    "&time=" + encodeURIComponent(time)
+})
+
+.then(response => response.json())
+.then(data => {
+
+if(data.status === "success"){
+  alert("Slot Booked Successfully")
+  location.reload()
+}else{
+  alert(data.message)
+}
+
+})
+}
+
+// =======================
+// EXIT SLOT FUNCTION
+// =======================
+function exitSlot(slot){
+
+fetch("/exit_slot", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: "slot=" + encodeURIComponent(slot)
+})
+
+.then(res => res.json())
+.then(data => {
+    alert("Slot Exited Successfully")
+    location.reload()
+})
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<h1>Welcome {{email}}</h1>
+
+<h2>Enter Parking Details</h2>
+
+<input type="text" id="username" placeholder="Enter Your Name"><br>
+<input type="text" id="phone" placeholder="Enter Phone Number"><br>
+<input type="text" id="carname" placeholder="Enter Car Name"><br>
+<input type="text" id="carnumber" placeholder="Enter Car Number"><br>
+<input type="time" id="time"><br><br>
+
+<!-- ========================= -->
+<!-- YOUR BOOKED SLOTS (EXIT) -->
+<!-- ========================= -->
+
+<h2>Your Booked Slots</h2>
+
+{% if user_slots and user_slots|length > 0 %}
+
+    {% for s in user_slots %}
+        <div class="card">
+            <p>Slot: {{ s[1]}}</p>
+            <p>🚗 {{ s[6] }}</p>
+
+            <button onclick="exitSlot('{{s[1]}}')">
+                ❌ Exit
+            </button>
+        </div>
+    {% endfor %}
+
+{% else %}
+    <p>No active booking</p>
+{% endif %}
+
+<!-- ========================= -->
+<!-- BOOK NEW SLOT -->
+<!-- ========================= -->
+ <h2>Select Slot from Map</h2>
+
+<div id="map" style="height:400px; width:90%; margin:auto; border-radius:10px;"></div>
+
+<h2>Select Parking Slot</h2>
+
+{% for slot in slots %}
+
+<button 
+class="slot {{slot[2]}}"
+
+{% if slot[2] == "free" %}
+onclick="bookSlot('{{slot[1]}}')"
+{% else %}
+disabled
+{% endif %}
+>
+
+{{slot[1]}}
+
+</button>
+
+{% endfor %}
+<script>
+var map;
+var markers = [];
+
+// initialize map
+window.onload = function(){
+
+    map = L.map('map').setView([28.8957, 76.6067], 19);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © OpenStreetMap contributors'
+    }).addTo(map);
+
+    loadSlots();
+    setInterval(loadSlots, 3000);
+};
+
+// load slots from backend
+function loadSlots(){
+
+fetch("/get_slots")
+.then(res => res.json())
+.then(data => {
+
+    let slots = data.slots;
+    // remove old markers
+markers.forEach(m => map.removeLayer(m));
+markers = [];
+
+    slots.forEach(s => {
+
+        let lat = 28.8957 + (Math.random() * 0.0005);
+        let lng = 76.6067 + (Math.random() * 0.0005);
+
+        if(lat && lng){
+
+            let marker = L.circleMarker([lat, lng], {
+    color: s[2] === 'free' ? 'green' : 'red',
+    radius: 8
+}).addTo(map);
+
+markers.push(marker);
+
+marker.bindTooltip(s[1], { permanent: true })
+      .bindPopup(s[1] + " - " + s[2]);
+
+            // 🔥 CLICK FEATURE
+            marker.on('click', function(){
+
+    if(s[2] === 'occupied'){
+        alert("This slot is already occupied");
+        return;
+    }
+
+
+    let choice = confirm(
+        "Slot: " + s[1] + "\n\nOK = Get Direction\nCancel = Book Slot"
+    );
+    if(choice){
+      alert("Direction feature coming soon");
+    }else{
+    bookSlot(s[1]);
+    }
+
+   
+
+});
+
+        }
+
+    });
+
+});
+}
+</script>
+
+</body>
+</html>

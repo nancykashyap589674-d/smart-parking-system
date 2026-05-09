@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Parking Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_login.css') }}">
+</head>
+
+<body>
+  <div class="background"></div>
+  <div class="login-container">
+    <h2>Smart Parking System</h2>
+    <p>Select your login type</p>
+
+    <div class="btn-container">
+      <a href="/user_login" class="login-btn user">👤 User Login (Email + OTP)</a>
+      <a href="/admin_login" class="login-btn admin">🔐 Admin Login (Username + Password)</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP | Smart Parking</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* General background and font */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #7b2ff7, #00c6ff, #007bff);
+      background-size: 400% 400%;
+      animation: bgShift 10s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    @keyframes bgShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Main container */
+    .container {
+      background: rgba(255,255,255,0.1);
+      padding: 40px 50px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(255,255,255,0.3);
+      backdrop-filter: blur(10px);
+      width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      text-shadow: 0 0 15px rgba(255,255,255,0.7);
+    }
+
+    p {
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    /* OTP input field */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      font-size: 18px;
+      letter-spacing: 5px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    /* Verify button */
+    button {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(45deg, #00ffcc, #00b3b3);
+      box-shadow: 0 0 20px #00ffcc;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 35px #00ffcc;
+    }
+
+    /* Resend OTP link */
+    .links {
+      margin-top: 20px;
+    }
+
+    .links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      opacity: 0.9;
+      transition: 0.3s;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+      opacity: 1;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 14px;
+      opacity: 0.8;
+      text-shadow: 0 0 10px rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Verify OTP 🔐</h1>
+    <p>Please enter the 6-digit OTP sent to your email</p>
+
+    <form method="POST">
+      <input type="text" name="otp" placeholder="Enter OTP" maxlength="6" required>
+      <button type="submit">Verify</button>
+    </form>
+
+    <div class="links">
+      <a href="/login_email">← Resend OTP</a> | <a href="/">Back to Home</a>
+    </div>
+  </div>
+
+  <footer>Smart Parking System © 2026 </footer>
+</body>
+</html>

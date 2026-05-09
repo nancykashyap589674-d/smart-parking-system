@@ -1,0 +1,162 @@
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Animated Gradient Background */
+body {
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(270deg, #007bff, #00bcd4, #00ffcc, #ff00ff);
+  background-size: 800% 800%;
+  animation: gradientShift 10s ease infinite;
+  z-index: -1;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Login / Card Container */
+.login-container {
+  width: 360px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  margin: 100px auto;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Headings */
+.login-container h2 {
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 22px;
+}
+
+.login-container p {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+/* Input Fields */
+.input-box input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 10px;
+  outline: none;
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Main Buttons */
+.login-btn {
+  display: inline-block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background: #00ffcc;
+  border: none;
+  color: #333;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+  text-decoration: none;
+}
+
+.login-btn:hover {
+  background: #fff;
+  box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+  transform: scale(1.05);
+}
+
+/* Dual Login Buttons (User / Admin) */
+.btn-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.login-btn.user {
+  background: #00ffcc;
+  color: #333;
+}
+
+.login-btn.admin {
+  background: #ff6699;
+  color: #fff;
+}
+
+.login-btn.user:hover {
+  box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+}
+
+.login-btn.admin:hover {
+  box-shadow: 0 0 15px #ff6699, 0 0 30px #ff6699;
+}
+
+/* Flash Messages */
+.flash {
+  background: rgba(255,255,255,0.2);
+  padding: 8px;
+  border-radius: 8px;
+  margin: 10px 0;
+  color: #fff;
+  font-size: 14px;
+  animation: fadeInFlash 0.6s ease-in;
+}
+
+@keyframes fadeInFlash {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .login-container {
+    width: 90%;
+    margin-top: 60px;
+    padding: 25px;
+  }
+
+  .login-container h2 {
+    font-size: 20px;
+  }
+
+  .login-btn {
+    font-size: 14px;
+    padding: 8px;
+  }
+}

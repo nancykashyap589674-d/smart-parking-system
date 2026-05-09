@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Exit Parking</title>
+
+<style>
+body{
+background:black;
+color:white;
+text-align:center;
+font-family:Arial;
+}
+
+.card{
+border:1px solid white;
+margin:10px;
+padding:10px;
+border-radius:10px;
+}
+
+button{
+padding:10px;
+background:red;
+color:white;
+border:none;
+cursor:pointer;
+border-radius:5px;
+}
+</style>
+
+<script>
+function exitSlot(slot){
+
+fetch("/exit_slot", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: "slot=" + encodeURIComponent(slot)
+})
+
+.then(res => res.json())
+.then(data => {
+    alert("Slot Exited Successfully")
+    location.reload()
+})
+
+}
+</script>
+
+</head>
+
+<body>
+
+<h1>🚗 Your Booked Slots</h1>
+<h3>Select slot to EXIT</h3>
+<p style="color:yellow;">You have {{ slots|length }} active booking(s)</p>
+
+{% for s in slots %}
+
+<div class="card">
+    <h2>{{ s.slot_name }}</h2>
+    <p>👤 {{ s.name }}</p>
+    <p>🚗 {{ s.carname }}</p>
+    <p>🔢 {{ s.carnumber }}</p>
+    <p>⏰ {{ s.time }}</p>
+
+    <button onclick="exitSlot('{{s.slot_name}}')">
+        ❌ Exit {{s.slot_name}}
+    </button>
+</div>
+
+{% endfor %}
+
+</body>
+</html>

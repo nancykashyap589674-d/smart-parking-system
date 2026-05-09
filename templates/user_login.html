@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login - Smart Parking</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_login.css') }}">
+</head>
+
+<body>
+  <div class="background"></div>
+  <div class="login-container">
+    <h2>User Login</h2>
+    <p>Enter your email to receive OTP</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/user_login">
+      <div class="input-box">
+        <input type="email" name="email" placeholder="Enter your email" required />
+      </div>
+      <button type="submit" class="login-btn">Send OTP</button>
+    </form>
+  </div>
+</body>
+</html>
