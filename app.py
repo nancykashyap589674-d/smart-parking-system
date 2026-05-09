@@ -194,7 +194,7 @@ def login_email():
             body = f"Your OTP is: {otp}"
             msg.attach(MIMEText(body, 'plain'))
 
-            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
             server.starttls()
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
