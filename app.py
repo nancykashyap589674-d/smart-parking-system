@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS parking_slots (
 # -------------------------------
 # EMAIL CONFIGURATION
 # -------------------------------
-SENDER_EMAIL = "nancykashyap589674@gmail.com"
-SENDER_PASSWORD = "jzbthevzcjvjehsa"
+SENDER_EMAIL = os.environ.get("EMAIL_USER")
+SENDER_PASSWORD = os.environ.get("EMAIL_PASS")
 
 # -------------------------------
 # GENERATE QR
