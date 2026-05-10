@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS parking_slots (
 # -------------------------------
 # EMAIL CONFIGURATION
 # -------------------------------
+import os
 SENDER_EMAIL = os.environ.get("EMAIL_USER")
 SENDER_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
@@ -199,6 +200,9 @@ def login_email():
             server.ehlo()
             server.starttls()
             server.ehlo()
+            print("EMAIL:", SENDER_EMAIL)
+            print("PASSWORD EXISTS:", SENDER_PASSWORD is not None)
+            print("OTP:", otp)
 
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
 
