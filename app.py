@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS parking_slots (
 # EMAIL CONFIGURATION
 # -------------------------------
 SENDER_EMAIL = os.environ.get("EMAIL_USER")
-SENDER_PASSWORD = os.environ.get("EMAIL_PASS")
+SENDER_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
 # -------------------------------
 # GENERATE QR
@@ -182,7 +182,7 @@ def login_email():
         email = request.form['email']
 
         otp = random.randint(100000, 999999)
-        print("OTP IS:", otp)
+        
         session['otp'] = otp
         session['temp_email'] = email
 
@@ -196,9 +196,16 @@ def login_email():
             msg.attach(MIMEText(body, 'plain'))
 
             server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+            server.ehlo()
             server.starttls()
+            server.ehlo()
+
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
-            server.sendmail(SENDER_EMAIL, email, msg.as_string())
+
+            text = msg.as_string()
+
+            server.sendmail(SENDER_EMAIL, email, text)
+
             server.quit()
 
             flash("OTP sent successfully!")
