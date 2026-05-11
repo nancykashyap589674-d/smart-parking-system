@@ -195,17 +195,16 @@ def login_email():
 
             body = f"Your OTP is: {otp}"
             msg.attach(MIMEText(body, 'plain'))
-
-            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
-            server.ehlo()
+            server = smtplib.SMTP("smtp-relay.brevo.com", 587)
             server.starttls()
-            server.ehlo()
+
             print("EMAIL:", SENDER_EMAIL)
             print("PASSWORD EXISTS:", SENDER_PASSWORD is not None)
             print("OTP:", otp)
 
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
 
+            
             text = msg.as_string()
 
             server.sendmail(SENDER_EMAIL, email, text)
