@@ -195,17 +195,15 @@ def login_email():
 
             body = f"Your OTP is: {otp}"
             msg.attach(MIMEText(body, 'plain'))
-            server = smtplib.SMTP("smtp-relay.brevo.com", 587)
-            
-            server.starttls()
-            
+
+            server = smtplib.SMTP_SSL("smtp-relay.brevo.com", 465)
+
             print("EMAIL:", SENDER_EMAIL)
             print("PASSWORD EXISTS:", SENDER_PASSWORD is not None)
             print("OTP:", otp)
 
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
 
-            
             text = msg.as_string()
 
             server.sendmail(SENDER_EMAIL, email, text)
@@ -403,4 +401,3 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 5000))
     )
-
