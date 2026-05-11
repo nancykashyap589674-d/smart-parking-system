@@ -183,6 +183,7 @@ def login_email():
         email = request.form['email']
 
         otp = random.randint(100000, 999999)
+        print("OTP IS:", otp)
         
         session['otp'] = otp
         session['temp_email'] = email
