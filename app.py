@@ -195,7 +195,7 @@ def login_email():
 
             body = f"Your OTP is: {otp}"
             msg.attach(MIMEText(body, 'plain'))
-            server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=60)
+            server = smtplib.SMTP("smtp-relay.brevo.com", 587)
             
             server.starttls()
             
