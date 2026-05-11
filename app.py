@@ -196,17 +196,14 @@ def login_email():
             body = f"Your OTP is: {otp}"
             msg.attach(MIMEText(body, 'plain'))
 
-            server = smtplib.SMTP_SSL("smtp-relay.brevo.com", 465)
-
-            print("EMAIL:", SENDER_EMAIL)
-            print("PASSWORD EXISTS:", SENDER_PASSWORD is not None)
-            print("OTP:", otp)
+            server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=60)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
 
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
 
-            text = msg.as_string()
-
-            server.sendmail(SENDER_EMAIL, email, text)
+            server.sendmail(SENDER_EMAIL, email, msg.as_string())
 
             server.quit()
 
