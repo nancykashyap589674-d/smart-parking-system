@@ -61,7 +61,7 @@ import os
 SMTP_USER = os.environ.get("EMAIL_USER")
 SMTP_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
-SENDER_EMAIL = SMTP_USER
+SENDER_EMAIL = "nancykashyap589674@gmail.com"
 # -------------------------------
 # GENERATE QR
 # -------------------------------
