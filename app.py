@@ -58,9 +58,10 @@ CREATE TABLE IF NOT EXISTS parking_slots (
 # EMAIL CONFIGURATION
 # -------------------------------
 import os
-SENDER_EMAIL = os.environ.get("EMAIL_USER")
-SENDER_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+SMTP_USER = os.environ.get("EMAIL_USER")
+SMTP_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
+SENDER_EMAIL = SMTP_USER
 # -------------------------------
 # GENERATE QR
 # -------------------------------
@@ -198,11 +199,10 @@ def login_email():
             msg.attach(MIMEText(body, 'plain'))
 
             server = smtplib.SMTP_SSL("smtp-relay.brevo.com", 465, timeout=15)
-            print("EMAIL:", SENDER_EMAIL)
-            print("PASSWORD EXISTS:", SENDER_PASSWORD is not None)
+            print("EMAIL:", SMTP_USER)
+            print("PASSWORD EXISTS:", SMTP_PASSWORD is not None)
 
-            server.login(SENDER_EMAIL, SENDER_PASSWORD)
-
+            server.login(SMTP_USER, SMTP_PASSWORD)
             server.sendmail(
             SENDER_EMAIL,
             email,
