@@ -199,8 +199,10 @@ def login_email():
             msg.attach(MIMEText(body, 'plain'))
 
             server = smtplib.SMTP_SSL("smtp-relay.brevo.com", 465, timeout=15)
-            print("EMAIL:", SMTP_USER)
-            print("PASSWORD EXISTS:", SMTP_PASSWORD is not None)
+            print("SMTP USER:", SMTP_USER)
+
+            print("PASSWORD EXISTS:", SMTP_PASSWORD is not None )
+            
 
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.sendmail(
